@@ -1565,25 +1565,6 @@ a:hover {
 }
 
 
-That clue - 1 video showed up when the cards were 100% wide,
-and 2 videos show up now that two fit on screen,
-while the rest are still missing when clicking the right arrow - pinpoints the exact issue. Why Only the Initially Visible Videos Appear There are two possible culprits depending on what you see when you click the right arrow: 1. The Entire Card (Box, Title, and Video) Is Missing When Clicking Right Your JavaScript is moving .yt-carousel-track using transform: translateX(...) (the same way your .video-carousel higher up in the CSS works),
-rather than scrolling with scrollLeft. When overflow: hidden or overflow-x: auto is placed directly on .yt-carousel-track,
-the browser clips the track's contents to its initial box width before applying the transform:
-
-When each card was 100% wide,
-only 1 card fit inside the track's initial box; cards 2, 3, and 4 were clipped off.
-
-When we shrunk the cards so two fit across,
-2 cards fell inside that initial box and rendered,
-while cards 3 and 4 were still outside the box and got clipped off. When you click the right arrow and JS runs transform: translateX(-...) on .yt-carousel-track,
-the browser slides that already-clipped 2-video box to the left,
-revealing empty space where card 3 should be. The Fix: Set overflow: visible on .yt-carousel-track so it never clips its own children,
-and move overflow: hidden up to the parent container (.yt-carousel). 2. The Card Border and Title Appear,
-but the YouTube Player Inside Is Blank If the card box slides into view when you click the right arrow,
-but the <iframe>inside it is empty/invisible,
-check your HTML <iframe>tags and remove loading="lazy" if it is there. Browsers often fail to trigger lazy-loading on iframes that start off-screen inside a horizontally transformed flex track. Updated CSS (Fixes Hidden Next Videos + Slightly Larger Videos + Same Spacing) To make the videos a bit larger while keeping the exact same gap: 2rem spacing,
-I removed the 1000px width cap on .yt-carousel and raised the card size cap so each video goes from roughly 415px wide up to 520px-540px wide. Replace your LIVE VIDEOS / YOUTUBE CAROUSEL section with this: CSS
 
 /* =======================================================
    LIVE VIDEOS / YOUTUBE CAROUSEL
